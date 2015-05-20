@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cadastro de Pessoas</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css" />
+
+        <script src="js/libs/angular.js/angular.js"></script>
+        <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
+    </head>
+    <body>
+        <div class="container" 
+             ng-app="aplicacaoVanguarda" 
+             ng-controller="pessoaController">
+            <h2>Pessoa</h2>
+            <form role="form">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text"
+                           class="form-control" 
+                           ng-model="nome"
+                           id="nome" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" 
+                           ng-model="email"
+                           class="form-control" 
+                           id="email" 
+                           placeholder="Digite o e-mail">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox">Ativo?
+                    </label>
+                </div>
+                <button type="Salvar" class="btn btn-default">Salvar</button>
+            </form>
+
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="l in pessoas">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ l.nome}}</td>
+                            <td>{{ l.email}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            var app = angular.module('aplicacaoVanguarda', []);
+            app.controller('pessoaController', function ($scope) {
+                $scope.nome = "Fulano de tal";
+                $scope.email = "fulano@tal.com.br";
+                $scope.pessoas = [
+                    {nome: 'Ciclano de Tal', email: 'ciclano@tal.com.br'},
+                    {nome: 'Beltrana de Tal', email: 'beltrana@tal.com.br'},
+                    {nome: 'Ziclana de Tal', email: 'ziclana@tal.com.br'}
+                ];
+            });
+        </script>
+    </body>
+</html>

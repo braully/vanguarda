@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cadastro de Pessoas</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css" />
+
+        <script src="js/libs/angular.js/angular.js"></script>
+        <script src="js/libs/angular.js/angular-resource.js"></script>
+        <script src="js/libs/angular.js/angular-messages.js"></script>
+
+        <script src="js/libs/jquery/jquery.js"></script>
+        <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
+    </head>
+    <body>
+        <div class="container" 
+             ng-app="aplicacaoVanguarda" 
+             ng-controller="pessoaController">
+            <h2>Pessoa</h2>
+            <form role="form" novalidate="novalidate" class="form-horizontal" name="form">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text"
+                           class="form-control" 
+                           ng-model="pessoa.nome" required="true"
+                           id="nome" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" 
+                           ng-model="pessoa.email" required="true"
+                           class="form-control" 
+                           id="email" 
+                           placeholder="Digite o e-mail">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox">Ativo?
+                    </label>
+                </div>
+                <button type="button" class="btn btn-default" ng-click="salvarPessoa()">Salvar</button>
+            </form>
+
+            <div ng-messages="form.$error">
+                <div ng-repeat="errorMessage in errorMessages" role="alert">
+                    <div ng-message-exp="errorMessage.type">{{ errorMessage.text}}</div>
+                </div>
+                <div ng-repeat="successMessage in successMessages" role="alert">
+                    <div ng-message-exp="successMessage.type">{{ successMessage.text}}</div>
+                </div>
+            </div>
+
+            <div ng-show="form.submitted">
+                Sucesso
+            </div>
+            <div ng-show="mensagemErro">
+                Erro
+            </div>
+
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="l in pessoas">
+                            <td>{{ l.id}}</td>
+                            <td>{{ l.nome}}</td>
+                            <td>{{ l.email}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            var app = angular.module('aplicacaoVanguarda', ['ngResource', 'ngMessages']);
+            app.constant('ENDPOINT_URI', 'http://localhost:8080/vanguarda/');
+
+            app.factory('EntidadePessoaFactory', function ($resource) {
+                return $resource('/vanguarda/entidade/pessoa/:id', {}, {
+                    query: {method: 'GET', isArray: true},
+                    create: {method: 'POST'},
+                    show: {method: 'GET'},
+                    update: {method: 'PUT', params: {id: '@id'}},
+                    delete: {method: 'DELETE', params: {id: '@id'}}
+                })
+            });
+
+            app.controller('pessoaController', function ($scope, EntidadePessoaFactory) {
+                $scope.pessoas = {};
+
+                $scope.listarPessoas = function () {
+                    $scope.pessoas = EntidadePessoaFactory.query();
+                };
+
+                $scope.novaPessoa = function () {
+                    $scope.pessoa = {};
+                    $scope.pessoa.id = null;
+                    $scope.pessoa.nome = '';
+                    $scope.pessoa.email = '';
+                };
+
+                $scope.salvarPessoa = function () {
+                    try {
+                        EntidadePessoaFactory.create($scope.pessoa, function (dado, respHead) {
+                            $scope.listarPessoas();
+                            $scope.novaPessoa();
+                        }, function (err) {
+                        });
+                    } catch (err) {
+                        console.log(err);
+                    }
+                };
+                $scope.listarPessoas();
+            });
+        </script>
+    </body>
+</html>
